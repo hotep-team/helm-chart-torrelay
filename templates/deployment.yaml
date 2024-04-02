@@ -78,19 +78,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tor-relay
+  name: torrelay
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tor-relay
+      app: torrelay
   template:
     metadata:
       labels:
-        app: tor-relay
+        app: torrelay
     spec:
       containers:
-      - name: tor-relay
+      - name: torrelay
         image: <Votre-Image-Tor>
         volumeMounts:
         - name: config
