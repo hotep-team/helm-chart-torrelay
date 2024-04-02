@@ -1,0 +1,110 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: obfs4-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: obfs4-bridge
+  template:
+    metadata:
+      labels:
+        app: obfs4-bridge
+    spec:
+      containers:
+      - name: obfs4-bridge
+        image: thetorproject/obfs4-bridge:latest
+        ports:
+        - containerPort: 5893
+        env:
+        - name: OR_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: obfs4-bridge-config
+              key: OR_PORT
+        - name: PT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: obfs4-bridge-config
+              key: PT_PORT
+        - name: EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: obfs4-bridge-config
+              key: EMAIL
+        - name: NICKNAME
+          valueFrom:
+            configMapKeyRef:
+              name: obfs4-bridge-config
+              key: NICKNAME
+        volumeMounts:
+        - mountPath: /var/lib/tor
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: obfs4-bridge-data-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squid-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid-proxy
+  template:
+    metadata:
+      labels:
+        app: squid-proxy
+    spec:
+      containers:
+      - name: squid-proxy
+        image: <Votre-Image-Squid>
+        volumeMounts:
+        - name: config
+          mountPath: /etc/squid/squid.conf
+          subPath: squid.conf
+        ports:
+        - containerPort: 3128
+      volumes:
+      - name: config
+        configMap:
+          name: squid-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tor-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tor-relay
+  template:
+    metadata:
+      labels:
+        app: tor-relay
+    spec:
+      containers:
+      - name: tor-relay
+        image: <Votre-Image-Tor>
+        volumeMounts:
+        - name: config
+          mountPath: /etc/tor/torrc
+          subPath: torrc
+        - name: data
+          mountPath: /var/lib/tor
+        env:
+        # Ajoutez d'autres variables d'environnement si nécessaire
+      volumes:
+      - name: config
+        configMap:
+          name: tor-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: tor-data-pvc
+

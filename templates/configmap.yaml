@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: obfs4-bridge-config
+data:
+  OR_PORT: "5893" 
+  PT_PORT: "58939"
+  EMAIL: "you@example.com"
+  NICKNAME: "DockerObfs4Bridge"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squid-config
+data:
+  squid.conf: |
+    http_port 3128
+    cache deny all
+
+    auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd
+    auth_param basic children 5
+    auth_param basic realm Squid Proxy Server
+    auth_param basic credentialsttl 2 hours
+    auth_param basic casesensitive off
+
+    acl authenticated proxy_auth REQUIRED
+    http_access allow authenticated
+    http_access deny all
+
+    cache_peer 127.0.0.1 parent 9050 0 no-query default
+    never_direct allow all
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tor-config
+data:
+  torrc: |
+    ORPort 9001
+    Nickname monRelaisTor
+    ContactInfo votre_email@example.com
+    RelayBandwidthRate 100 KB
+    RelayBandwidthBurst 200 KB
+    ExitPolicy reject *:*
+    DisableDebuggerAttachment 0
+

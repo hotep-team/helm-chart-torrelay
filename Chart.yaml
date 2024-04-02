@@ -1,0 +1,18 @@
+apiVersion: v2
+name: team-tamia-community-chart-torrelay 
+description: A Helm chart for Kubernetes to deploy a Tor relay with obfs.
+type: application
+version: 0.0.1
+appVersion: "latest"
+keywords:
+  - obfs4
+  - tor
+  - bridge
+home: https://tamia.team/open-source/helm-chart-torrelay
+sources:
+  - https://github.com/tamia-team/helm-chart-torrelay
+maintainers:
+  - name: The Tamia Team 
+    email: tech@tamia.team 
+    url: https://tamia.team/
+
